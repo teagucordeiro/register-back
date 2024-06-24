@@ -21,6 +21,8 @@ app.post("/activities", async (req, res) => {
     res.status(201).json(activity);
   } catch (err) {
     res.status(500).json({ error: err.message });
+    //log the error
+    console.log(err);
   }
 });
 
@@ -63,6 +65,24 @@ app.get("/activities", async (req, res) => {
   try {
     const activities = await prisma.activity.findMany();
     res.status(200).json(activities);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/activities/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const activity = await prisma.activity.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        activityLogs: {
+          orderBy: { date: "desc" },
+          take: 1,
+        },
+      },
+    });
+    res.status(200).json(activity);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
