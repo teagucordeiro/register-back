@@ -21,8 +21,6 @@ app.post("/activities", async (req, res) => {
     res.status(201).json(activity);
   } catch (err) {
     res.status(500).json({ error: err.message });
-    //log the error
-    console.log(err);
   }
 });
 
@@ -76,7 +74,7 @@ app.get("/activities/:id", async (req, res) => {
     const activity = await prisma.activity.findUnique({
       where: { id: parseInt(id) },
       include: {
-        activityLogs: {
+        logs: {
           orderBy: { date: "desc" },
           take: 1,
         },
